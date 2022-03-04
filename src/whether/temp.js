@@ -7,45 +7,62 @@ const Temp = () => {
   const [searchValue, setSearchValue] = useState("pune");
   const [tempInfo, setTempInfo] = useState({});
 
+  const getWeatherInformation = async () => {
+   try{
+    let url = `https://api.openweathermap.org/data/2.5/weather?q=${searchValue}&units=metric&appid=9ea940c0ed51de346a66c787dcfc7b31`;
+  
+    let res = await fetch(url);
+    let data = await res.json();
+// main me jakr temp me mera temprature h toh use array descructuring
+// temp hme farahnite me milega use celcius me krne ke liye url me &matric& likhna pdega
+    const { temp, humidity, pressure } = data.main;
+    // becaz whether ek array h and 0 index ke main pr cloud pda h
+    // main ka naam change kr diya: ka use krke
+    const { main: weathermood } = data.weather[0];
+     // name bahr hi pda h
+    const { name } = data;
+    const { speed } = data.wind;
+    const { country, sunset } = data.sys;
+//  new object bnana h jisme sb ho
+    const myNewWeatherInfo = {
+      temp,
+      humidity,
+      pressure,
+      weathermood,
+      name,
+      speed,
+      country,
+      sunset,
+    };
+
+    setTempInfo(myNewWeatherInfo);
+  }catch(error){
+    console.log(error);
+  }
+  }
+
   const getWeatherInfo = async () => {
     try {
-      let url = `https://api.openweathermap.org/data/2.5/weather?q=${searchValue}&units=metric&appid=9ea940c0ed51de346a66c787dcfc7b31`;
-
-      let res = await fetch(url);
-      let data = await res.json();
- // main me jakr temp me mera temprature h toh use array descructuring
- // temp hme farahnite me milega use celcius me krne ke liye url me &matric& likhna pdega
-      const { temp, humidity, pressure } = data.main;
-      // becaz whether ek array h and 0 index ke main pr cloud pda h
-      // main ka naam change kr diya: ka use krke
-      const { main: weathermood } = data.weather[0];
-       // name bahr hi pda h
-      const { name } = data;
-      const { speed } = data.wind;
-      const { country, sunset } = data.sys;
-//  new object bnana h jisme sb ho
-      const myNewWeatherInfo = {
-        temp,
-        humidity,
-        pressure,
-        weathermood,
-        name,
-        speed,
-        country,
-        sunset,
-      };
-
-      setTempInfo(myNewWeatherInfo);
+        getWeatherInformation();
     } catch (error) {
       console.log(error);
     }
   };
+  
  //By default mujhe yamunanagar dikhaye toh iske liye useEffect hook is used
   useEffect(() => {
     //Page refresh hote hi ye function call ho jaye
+    const getWeatherInfo = async () => {
+      try {
+          getWeatherInformation();
+      } catch (error) {
+        console.log(error);
+      }
+    };
     getWeatherInfo();
   }, []);
 
+  
   return (
     <>
       <div className="wrap">
